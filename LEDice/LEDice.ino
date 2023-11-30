@@ -37,15 +37,26 @@ Button btnRollDice(ROLL_PIN);
 Button btnNumberDice(NUMBER_DICE_PIN);
 
 void setup() {
-  matrix.shutdown(0, false);
-
   randomSeed(analogRead(RND_PIN));
-
-  matrix.setIntensity(0, 7);
-  matrix.clearDisplay(0);
 
   btnRollDice.begin();
   btnNumberDice.begin();
+
+  matrix.shutdown(0, false);
+
+  uint8_t intensity = 0;
+
+  if (!digitalRead(ROLL_PIN)) {
+    intensity += 5;
+  }
+
+  if (!digitalRead(NUMBER_DICE_PIN)) {
+    intensity += 10;
+  }
+
+  matrix.setIntensity(0, intensity);
+
+  matrix.clearDisplay(0);
 
   rollDice();
 }
