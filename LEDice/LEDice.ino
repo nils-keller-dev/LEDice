@@ -28,7 +28,7 @@ const uint8_t smallDice[6][3] = {
   { B101, B101, B101 },
 };
 
-LedControl matrix = LedControl(DIN_PIN, CLK_PIN, CS_PIN, MAX_SEG);
+LedControl* matrix;
 bool diceRolling = false;
 uint32_t buttonPressTime = 0;
 uint8_t numberDice;
@@ -36,13 +36,29 @@ uint8_t numberDice;
 Button btnRollDice(ROLL_PIN);
 Button btnNumberDice(NUMBER_DICE_PIN);
 
+void rollDice(bool setup = false) {
+  if (!setup) {
+    matrix->clearDisplay(0);
+    delay(ROLL_TIME);
+  }
+
+  if (numberDice == 0) {
+    rollSingleDice();
+  } else {
+    rollMultipleDice();
+  }
+}
+
 void setup() {
+  matrix = new LedControl(DIN_PIN, CLK_PIN, CS_PIN, MAX_SEG);
+  matrix->clearDisplay(0);
+
   randomSeed(analogRead(RND_PIN));
 
   btnRollDice.begin();
   btnNumberDice.begin();
 
-  matrix.shutdown(0, false);
+  matrix->shutdown(0, false);
 
   uint8_t intensity = 0;
 
@@ -54,32 +70,20 @@ void setup() {
     intensity += 10;
   }
 
-  matrix.setIntensity(0, intensity);
+  matrix->setIntensity(0, intensity);
 
-  matrix.clearDisplay(0);
-
-  rollDice();
+  rollDice(true);
 }
 
 void changeNumberDice() {
   numberDice = (numberDice + 1) % 4;
 }
 
-void rollDice() {
-  matrix.clearDisplay(0);
-  delay(ROLL_TIME);
-  if (numberDice == 0) {
-    rollSingleDice();
-  } else {
-    rollMultipleDice();
-  }
-}
-
 void rollSingleDice() {
   uint8_t number = random(6);
 
   for (uint8_t i = 0; i <= 7; i++) {
-    matrix.setRow(0, i, dice[number][i]);
+    matrix->setRow(0, i, dice[number][i]);
   }
 }
 
@@ -91,7 +95,7 @@ void rollMultipleDice() {
   }
 
   for (uint8_t i = 0; i <= 2; i++) {
-    matrix.setRow(0, i, smallDice[numbers[0]][i] | smallDice[numbers[1]][i] << 5);
+    matrix->setRow(0, i, smallDice[numbers[0]][i] | smallDice[numbers[1]][i] << 5);
   }
 
   if (numberDice < 2) {
@@ -103,7 +107,7 @@ void rollMultipleDice() {
     if (numberDice == 3) {
       rowValue |= smallDice[numbers[3]][i] << 5;
     }
-    matrix.setRow(0, i + 5, rowValue);
+    matrix->setRow(0, i + 5, rowValue);
   }
 }
 
