@@ -12,8 +12,8 @@
 
 const uint8_t dice[6][8] = {
   { B00000000, B00000000, B00000000, B00011000, B00011000, B00000000, B00000000, B00000000 },
-  { B11000000, B11000000, B00000000, B00000000, B00000000, B00000000, B00000011, B00000011 },
-  { B11000000, B11000000, B00000000, B00011000, B00011000, B00000000, B00000011, B00000011 },
+  { B00000011, B00000011, B00000000, B00000000, B00000000, B00000000, B11000000, B11000000 },
+  { B00000011, B00000011, B00000000, B00011000, B00011000, B00000000, B11000000, B11000000 },
   { B11000011, B11000011, B00000000, B00000000, B00000000, B00000000, B11000011, B11000011 },
   { B11000011, B11000011, B00000000, B00011000, B00011000, B00000000, B11000011, B11000011 },
   { B11000011, B11000011, B00000000, B11000011, B11000011, B00000000, B11000011, B11000011 }
@@ -95,7 +95,7 @@ void rollMultipleDice() {
   }
 
   for (uint8_t i = 0; i <= 2; i++) {
-    matrix->setRow(0, i, smallDice[numbers[0]][i] | smallDice[numbers[1]][i] << 5);
+    matrix->setRow(0, i, smallDice[numbers[0]][i] << 5 | smallDice[numbers[1]][i]);
   }
 
   if (numberDice < 2) {
@@ -103,9 +103,9 @@ void rollMultipleDice() {
   }
 
   for (uint8_t i = 0; i <= 2; i++) {
-    uint8_t rowValue = smallDice[numbers[2]][i];
+    uint8_t rowValue = smallDice[numbers[2]][i] << 5;
     if (numberDice == 3) {
-      rowValue |= smallDice[numbers[3]][i] << 5;
+      rowValue |= smallDice[numbers[3]][i];
     }
     matrix->setRow(0, i + 5, rowValue);
   }
