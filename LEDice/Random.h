@@ -16,18 +16,7 @@ void reseedRandom(uint32_t* address) {
 
     srandom(seed);
     eeprom_write_dword(address, raw);
-}
-
-inline void reseedRandom(unsigned short address) {
-    reseedRandom((uint32_t*)(address));
-}
-
-void reseedRandomInit(uint32_t* address, uint32_t value) {
-    eeprom_write_dword(address, value);
-}
-
-inline void reseedRandomInit(unsigned short address, uint32_t value) {
-    reseedRandomInit((uint32_t*)(address), value);
+    random(1);
 }
 
 uint32_t reseedRandomSeed EEMEM = 0xFFFFFFFF;

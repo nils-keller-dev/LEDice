@@ -80,7 +80,6 @@ void setup() {
     matrix.setIntensity(0, intensity);
 
     reseedRandom(&reseedRandomSeed);
-    random(6);
     rollDice();
 }
 
