@@ -6,54 +6,59 @@ LEDice is a compact, battery-powered device that uses an ATTINY85 microcontrolle
 
 * Simulates dice roll with a press of a button
 * Can display up to 4 dice at once
-* Rechargable - USB-C port for charging
+* Supports different kinds of dice: D4, D6, D8, D10, D12 and D20
 * Adjustable display brightness
 
 ## How it works
 
-1. Power the device on using its power switch
-2. Press the "Roll" button to roll the dice
-3. Press the "Mode" button to increase the number of dice
-   * Displaying more than one dice puts them in the corners at 3x3 pixels
-   * Maximum number of dice is 4. After that it will change to one fullscreen dice again
-4. Holding the buttons while powering on the device increases the brightness of the display as described in the table below. Note that a brightness value of 0 means that the display still visible, just at its dimmest setting.
+I made a flowchart to explain the features of the device.
 
-| Roll pressed | Mode pressed | Brightness |
+![Flowchart](./svg/flowchart.svg)
+
+On top of that, you can change the brightness of the dice by holding the buttons while switching it on:
+
+| ROLL pressed | MODE pressed | Brightness |
 |--------------|--------------|------------|
-| no           | no           | 0          |
-| yes          | no           | 5          |
-| no           | yes          | 10         |
-| yes          | yes          | 15         |
+| no           | no           | darkest    |
+| yes          | no           | dark       |
+| no           | yes          | bright     |
+| yes          | yes          | brightest  |
 
 ## Hardware
 
-The hardware folder contains the schematics and layout files for the custom PCB I used in this device. You can use these files to understand the hardware design or to create your own version of the device. I tried to make it easy for anyone to recreate this project.
+I designed two PCBs: The `Main PCB` and the `Battery PCB`.  
+The contents of the main PCB can be viewed in the schematic below. The Pinheaders will be connected to the display and the Pins on the bottom left are soldering pads to connect the external buttons and the battery that is located on the other PCB.  
+Don't forget to add the switch between one of the wires that connects the Baterry PCB to the Main PCB.
 
-* `schematic.svg` - The schematic diagram of the custom PCB. This can also be used as basis for trying out the project on a breadboard.
+![Schematic](./svg/schematic.svg)
+  
+Below is the main PCB. There are boards available that already handle all the display wiring to make it easier to use with a microcontroller. I basically integrated the circuit of those modules into my PCB to save space inside the case.
 
-  ![Schematic](./hardware/schematic.svg)
-* `PCB-front.svg` - The PCB from the front.
+![Main PCB Front](./svg/LEDice-front.svg) ![Main PCB Back](./svg/LEDice-back.svg)
+  
+The Battery PCB. It is a very simple PCB with the intention to make switching the battery easy.
 
-  ![PCB Front](./hardware/PCB-front.svg)
-* `PCB-back.svg` - The PCB from the back.
+![Battery PCB Back](./svg/Battery-front.svg) ![Battery PCB Back](./svg/Battery-back.svg)
 
-  ![PCB Back](./hardware/PCB-back.svg)
-* [`gerber-LEDice-v0.1.zip`](https://github.com/tsomic/LEDice/blob/main/hardware/gerber-LEDice-v0.1.zip) - A Gerber file for PCB fabrication. You can upload it to companies like [PCBWay](https://www.pcbway.com/).
+You can use the gerber files [`gerber-LEDice-v0.3.zip`](https://github.com/tsomic/LEDice/blob/main/hardware/gerber-LEDice-v0.3.zip) [`gerber-Battery.zip`](https://github.com/tsomic/LEDice/blob/main/hardware/gerber-Battery.zip) for PCB fabrication. You can order them from companies like [PCBWay](https://www.pcbway.com/).  
+The PCB dimensions are 32mm x 32mm with a thickness of 1mm.
 
-In the future, I'll also add files for a 3D printable case. The custom PCB is optional, but you'll probably need it if you want to use the case.
+In the future, I'll also add files for a 3D printable case. The custom PCBs are optional, but you will need them if you want to use the case.
 
-Components used (with product links):
+### Components used
 
-These are the components used including their product links so you can make sure everything will fit into the case, if you decide to use the one provided:
-
-* [ATTINY85 microcontroller including a socket](https://www.amazon.com/dp/B0BHZYGWSZ) - The socket allows you to easily remove the microcontroller from the PCB if needed.
-* [MAX7219 square 8x8 LED matrix module](https://www.amazon.com/dp/B091GGNGWL) - make sure that the PCB of the matrix is square and not bigger than the matrix itself. Also there are options with different colors.
-* [MH-CD42 LiPo Battery charging module](https://www.amazon.com/dp/B09XQB4J21)
-* [LiPo Battery](https://www.ebay.com/itm/255510046348?var=555462939802) - make sure the dimensions are correct: 31mm x 24mm x 3mm
-* [Female USB-C Port](https://www.amazon.com/dp/B091CRLJM2)
+* ATtiny85 microcontroller including a socket
+* Display control components (you can buy all these components together via [unsoldered DIY kits](https://fluxworkshop.com/products/ibaa100010-max7219-led-matrix-unsoldered?variant=32458809573436)).  
+  * MAX7219CN
+  * MAX7219 compatible 8x8 display
+  * 10μF Capacitor
+  * 0.1μF Ceramic Capacitor
+  * 10KΩ Resistor
+  * Two 8x1 Pin sockets for the display
+* CR2032 Battery
+* [Battery holder that fits the holes on the PCB](https://www.ebay.com/itm/255283139517)
 * [2 push buttons](https://www.ebay.com/itm/186063975695)
-* [1 switch](https://www.ebay.com/itm/186063975344)
+* [1 small switch](https://www.ebay.com/itm/186063975344)
 
-Please note, you'll need a programmer for the ATTINY85 microcontroller. The provided links are for reference, not necessarily the cheapest options. Feel free to shop around.
-
-Soldering tip for the custom PCB: Plan your soldering order to avoid obstructing soldering spots.
+The provided links are for reference, not necessarily the cheapest or best options for you.  
+Please note, you'll need a programmer for the ATtiny85 microcontroller.
