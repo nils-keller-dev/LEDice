@@ -1,14 +1,13 @@
 #include <LedControl.h>
 
 #include "Buttons.h"
-#include "Random.h"
 
 #define CS_PIN PB0
 #define CLK_PIN PB1
 #define DIN_PIN PB2
 #define ROLL_PIN PB4
-#define MODE_PIN A3
-#define RND_PIN A0
+#define MODE_PIN PB3
+#define RND_PIN A1
 #define ROLL_TIME 300
 #define BLINK_INTERVAL 500
 
@@ -54,7 +53,7 @@ const uint8_t diceSidesCount[6] PROGMEM = {4, 6, 8, 10, 12, 20};
 
 enum State { ROLLING, SELECTING };
 
-LedControl matrix = LedControl(DIN_PIN, CLK_PIN, CS_PIN);
+LedControl* matrix;
 Buttons buttons(ROLL_PIN, MODE_PIN);
 
 State currentState = ROLLING;
@@ -71,15 +70,18 @@ void rollSingleDice(uint8_t maximum, bool isDisplay = false);
 void rollMultipleDice(uint8_t count, uint8_t maximum);
 
 void setup() {
-    matrix.clearDisplay(0);
-    matrix.shutdown(0, false);
+    pinMode(RND_PIN, INPUT);
+    randomSeed(analogRead(RND_PIN));
+
+    matrix = new LedControl(DIN_PIN, CLK_PIN, CS_PIN);
+    matrix->clearDisplay(0);
+    matrix->shutdown(0, false);
 
     uint8_t intensity = 0;
     if (!digitalRead(ROLL_PIN)) intensity += 5;
     if (!digitalRead(MODE_PIN)) intensity += 10;
-    matrix.setIntensity(0, intensity);
+    matrix->setIntensity(0, intensity);
 
-    reseedRandom();
     rollDice();
 }
 
@@ -127,7 +129,7 @@ void loop() {
 }
 
 void startRoll() {
-    matrix.clearDisplay(0);
+    matrix->clearDisplay(0);
     rollStartTime = millis();
     isRolling = true;
 }
@@ -143,7 +145,7 @@ void handleBlinking(unsigned long currentTime) {
     if (currentTime - lastBlinkTime >= BLINK_INTERVAL) {
         lastBlinkTime = currentTime;
         isBlinkingOn = !isBlinkingOn;
-        isBlinkingOn ? rollDice(true) : matrix.clearDisplay(0);
+        isBlinkingOn ? rollDice(true) : matrix->clearDisplay(0);
     }
 }
 
@@ -159,7 +161,7 @@ void updateSelectedDice() {
 }
 
 void rollDice(bool isDisplay = false) {
-    matrix.clearDisplay(0);
+    matrix->clearDisplay(0);
     uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
 
     if (multipleNumber == 1 || selectedDice >= 3 || isDisplay) {
@@ -182,16 +184,16 @@ void rollMultipleDice(uint8_t count, uint8_t maximum) {
     }
 
     for (uint8_t i = 0; i <= 2; i++) {
-        matrix.setRow(0, 7 - i,
-                      pgm_read_byte(&smallDot[numbers[0]][i]) |
-                          pgm_read_byte(&smallDot[numbers[1]][i]) << 5);
+        matrix->setRow(0, 7 - i,
+                       pgm_read_byte(&smallDot[numbers[0]][i]) |
+                           pgm_read_byte(&smallDot[numbers[1]][i]) << 5);
     }
 
     if (count > 2) {
         for (uint8_t i = 0; i < 3; i++) {
             uint8_t row = pgm_read_byte(&smallDot[numbers[2]][i]);
             if (count == 4) row |= pgm_read_byte(&smallDot[numbers[3]][i]) << 5;
-            matrix.setRow(0, 2 - i, row);
+            matrix->setRow(0, 2 - i, row);
         }
     }
 }
@@ -209,13 +211,13 @@ void rollDecimal(uint8_t number) {
         uint8_t row =
             (digits[0] != 0) ? pgm_read_byte(&decimal[digits[0]][i]) : 0;
         row |= pgm_read_byte(&decimal[digits[1]][i]) << 5;
-        matrix.setRow(0, 7 - i, row);
+        matrix->setRow(0, 7 - i, row);
     }
 }
 
 void rollDot(uint8_t number) {
     for (uint8_t i = 0; i <= 7; i++) {
-        matrix.setRow(0, 7 - i, pgm_read_byte(&dot[number - 1][i]));
+        matrix->setRow(0, 7 - i, pgm_read_byte(&dot[number - 1][i]));
     }
 }
 
