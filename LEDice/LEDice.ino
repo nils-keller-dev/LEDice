@@ -79,7 +79,7 @@ void setup() {
     if (!digitalRead(MODE_PIN)) intensity += 10;
     matrix.setIntensity(0, intensity);
 
-    reseedRandom(&reseedRandomSeed);
+    reseedRandom();
     rollDice();
 }
 

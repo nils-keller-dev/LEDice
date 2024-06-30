@@ -2,12 +2,12 @@
 
 #include <avr/eeprom.h>
 
-void reseedRandom(uint32_t* address) {
+void reseedRandom() {
     static const uint32_t HappyPrime = 127807;
     uint32_t raw;
     unsigned long seed;
 
-    raw = eeprom_read_dword(address);
+    raw = eeprom_read_dword(0);
 
     do {
         raw += HappyPrime;
@@ -15,8 +15,6 @@ void reseedRandom(uint32_t* address) {
     } while ((seed < 1) || (seed > 2147483646));
 
     srandom(seed);
-    eeprom_write_dword(address, raw);
+    eeprom_write_dword(0, raw);
     random(1);
 }
-
-uint32_t reseedRandomSeed EEMEM = 0xFFFFFFFF;
