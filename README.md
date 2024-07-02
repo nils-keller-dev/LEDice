@@ -1,6 +1,6 @@
 # LEDice
 
-LEDice is a compact, battery-powered device that uses an ATTINY85 microcontroller and a MAX7219 8x8 LED matrix module to simulate dice rolls.
+LEDice is a compact, battery-powered device that uses an ATtiny85 microcontroller and a MAX7219 8x8 LED matrix module to simulate dice rolls.
 
 ## Core Features
 
@@ -8,6 +8,11 @@ LEDice is a compact, battery-powered device that uses an ATTINY85 microcontrolle
 * Can display up to 4 dice at once
 * Supports different kinds of dice: D4, D6, D8, D10, D12 and D20
 * Adjustable display brightness
+
+## Battery life
+
+The runtime is around **45 hours** on the lowest brightness level, which is most commonly used.  
+At maximum brightness, battery life can decrease to about 7 hours, but this can vary significantly depending on the selected dice.
 
 ## How it works
 
