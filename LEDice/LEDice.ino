@@ -17,7 +17,7 @@ const uint8_t diceSidesCount[6] PROGMEM = {4, 6, 8, 10, 12, 20};
 enum State { ROLLING, SELECTING };
 
 LedControl* matrix;
-Buttons buttons(ROLL_PIN, MODE_PIN);
+Buttons* buttons;
 
 State currentState = ROLLING;
 uint8_t selectedDice = 1;
@@ -41,28 +41,33 @@ void setup() {
     matrix->shutdown(0, false);
 
     uint8_t intensity = 0;
-    if (!digitalRead(ROLL_PIN)) intensity += 5;
-    if (!digitalRead(MODE_PIN)) intensity += 10;
+    bool rollPressed = !digitalRead(ROLL_PIN);
+    bool modePressed = !digitalRead(MODE_PIN);
+
+    if (rollPressed) intensity += 5;
+    if (modePressed) intensity += 10;
     matrix->setIntensity(0, intensity);
+
+    buttons = new Buttons(ROLL_PIN, MODE_PIN, rollPressed, modePressed);
 
     rollDice();
 }
 
 void loop() {
-    buttons.update();
+    buttons->update();
 
     switch (currentState) {
         case ROLLING:
             handleRolling(millis());
 
-            if (buttons.wasRollReleased()) {
+            if (buttons->wasRollReleased()) {
                 startRoll();
             }
-            if (buttons.wasModeReleased() && selectedDice <= 2) {
+            if (buttons->wasModeReleased() && selectedDice <= 2) {
                 handleModePress();
                 startRoll();
             }
-            if (buttons.wereBothPressed()) {
+            if (buttons->wereBothPressed()) {
                 currentState = SELECTING;
                 lastBlinkTime = 0;
                 isBlinkingOn = false;
@@ -73,16 +78,16 @@ void loop() {
         case SELECTING:
             handleBlinking(millis());
 
-            if (buttons.wereBothPressed()) {
+            if (buttons->wereBothPressed()) {
                 confirmSelection();
                 rollDice();
                 return;
             }
 
-            if (buttons.wasModeReleased()) {
+            if (buttons->wasModeReleased()) {
                 selectNextDice();
                 updateSelectedDice();
-            } else if (buttons.wasRollReleased()) {
+            } else if (buttons->wasRollReleased()) {
                 selectPreviousDice();
                 updateSelectedDice();
             }

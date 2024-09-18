@@ -8,7 +8,11 @@ class Buttons {
   private : bool skipNextRollRelease = false;
   private : bool skipNextModeRelease = false;
 
-  public : Buttons(uint8_t rollPin, uint8_t modePin) {
+  public : Buttons(uint8_t rollPin, uint8_t modePin, bool rollPressed, bool modePressed) {
+    skipNextRollRelease = rollPressed;
+    skipNextModeRelease = modePressed;
+    if (skipNextRollRelease && skipNextModeRelease) bothPressed = true;
+
     btnRoll = Bounce2::Button();
     btnMode = Bounce2::Button();
     btnRoll.attach(rollPin, INPUT_PULLUP);
