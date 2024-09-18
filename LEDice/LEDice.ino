@@ -41,6 +41,8 @@ void setup() {
     matrix->shutdown(0, false);
 
     uint8_t intensity = 0;
+    pinMode(ROLL_PIN, INPUT_PULLUP);
+    pinMode(MODE_PIN, INPUT_PULLUP);
     bool rollPressed = !digitalRead(ROLL_PIN);
     bool modePressed = !digitalRead(MODE_PIN);
 
