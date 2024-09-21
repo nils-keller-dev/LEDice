@@ -16,18 +16,18 @@ At maximum brightness, battery life can decrease to about 7 hours, but this can 
 
 ## How it works
 
-I made a flowchart to explain the features of the device.
+See this flowchart illustrating the features of the device:
 
 ![Flowchart](./svg/flowchart.svg)
 
-On top of that, you can change the brightness of the dice by holding the buttons while switching it on:
+You can also increase the brightness of the display by holding down buttons while powering it on:
 
-| ROLL pressed | MODE pressed | Brightness |
-|--------------|--------------|------------|
-| no           | no           | darkest    |
-| yes          | no           | dark       |
-| no           | yes          | bright     |
-| yes          | yes          | brightest  |
+| ROLL Button | MODE Button | Brightness Level |
+|-------------|-------------|------------------|
+| No          | No          | Lowest           |
+| Yes         | No          | Low              |
+| No          | Yes         | High             |
+| Yes         | Yes         | Highest          |
 
 ## Hardware
 
