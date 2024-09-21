@@ -36,6 +36,8 @@ void setup() {
     pinMode(RND_PIN, INPUT);
     randomSeed(analogRead(RND_PIN));
 
+    delay(100);
+
     matrix = new LedControl(DIN_PIN, CLK_PIN, CS_PIN);
     matrix->clearDisplay(0);
     matrix->shutdown(0, false);
