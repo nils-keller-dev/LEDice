@@ -30,7 +30,7 @@ bool isBlinkingOn = true;
 
 void rollDice(bool isDisplay = false);
 void rollSingleDice(uint8_t maximum, bool isDisplay = false);
-void rollMultipleDice(uint8_t count, uint8_t maximum);
+void rollMultipleDice(uint8_t count, uint8_t maximum, bool isDisplay = false);
 
 void setup() {
     pinMode(RND_PIN, INPUT);
@@ -67,7 +67,7 @@ void loop() {
             }
             if (buttons->wasModeReleased() && selectedDice <= 2) {
                 handleModePress();
-                startRoll();
+                rollDice(true);
             }
             if (buttons->wereBothPressed()) {
                 currentState = SELECTING;
@@ -82,7 +82,7 @@ void loop() {
 
             if (buttons->wereBothPressed()) {
                 confirmSelection();
-                rollDice();
+                rollDice(true);
                 return;
             }
 
@@ -134,10 +134,10 @@ void rollDice(bool isDisplay = false) {
     matrix->clearDisplay(0);
     uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
 
-    if (multipleNumber == 1 || selectedDice >= 3 || isDisplay) {
+    if (multipleNumber == 1 || selectedDice >= 3) {
         rollSingleDice(maximum, isDisplay);
     } else {
-        rollMultipleDice(multipleNumber, maximum);
+        rollMultipleDice(multipleNumber, maximum, isDisplay);
     }
 }
 
@@ -146,11 +146,11 @@ void rollSingleDice(uint8_t maximum, bool isDisplay = false) {
     selectedDice < 3 ? rollDot(number) : rollDecimal(number);
 }
 
-void rollMultipleDice(uint8_t count, uint8_t maximum) {
+void rollMultipleDice(uint8_t count, uint8_t maximum, bool isDisplay = false) {
     uint8_t numbers[count];
 
     for (uint8_t i = 0; i < count; i++) {
-        numbers[i] = random(maximum);
+        numbers[i] = isDisplay ? maximum - 1 : random(maximum);
     }
 
     for (uint8_t i = 0; i <= 2; i++) {
