@@ -1,9 +1,9 @@
-#include <Bounce2.h>
+#include "Bounce2.h"
 
 class Buttons {
    private:
-    Bounce2::Button btnRoll;
-    Bounce2::Button btnMode;
+    Bounce2 btnRoll;
+    Bounce2 btnMode;
     bool bothPressed = false;
     bool skipNextRollRelease = false;
     bool skipNextModeRelease = false;
@@ -15,14 +15,10 @@ class Buttons {
         skipNextModeRelease = modePressed;
         if (skipNextRollRelease && skipNextModeRelease) bothPressed = true;
 
-        btnRoll = Bounce2::Button();
-        btnMode = Bounce2::Button();
+        btnRoll = Bounce2();
+        btnMode = Bounce2();
         btnRoll.attach(rollPin, INPUT_PULLUP);
         btnMode.attach(modePin, INPUT_PULLUP);
-        btnRoll.interval(5);
-        btnMode.interval(5);
-        btnRoll.setPressedState(LOW);
-        btnMode.setPressedState(LOW);
     }
 
     void update() {
