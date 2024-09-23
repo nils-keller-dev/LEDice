@@ -28,16 +28,16 @@
   Previous contributions by Eric Lowry, Jim Schimpf and Tom Harkaway
   * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef Bounce2_h
-#define Bounce2_h
+#ifndef ButtonDebounce_h
+#define ButtonDebounce_h
 
 #include <inttypes.h>
 
 #include "Arduino.h"
 
-class Bounce2 {
+class ButtonDebounce {
    public:
-    Bounce2(int pin, int mode = INPUT_PULLUP);
+    ButtonDebounce(int pin, int mode = INPUT_PULLUP);
 
     bool update();
     bool read() const;
@@ -56,7 +56,6 @@ class Bounce2 {
     void toggleStateFlag(const uint8_t flag);
     bool getStateFlag(const uint8_t flag) const;
     bool readCurrentState();
-    void setPinMode(int pin, int mode);
 
     unsigned long previous_millis;
     uint8_t state;

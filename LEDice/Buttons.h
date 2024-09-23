@@ -1,9 +1,9 @@
-#include "Bounce2.h"
+#include "ButtonDebounce.h"
 
 class Buttons {
    private:
-    Bounce2 btnRoll;
-    Bounce2 btnMode;
+    ButtonDebounce btnRoll;
+    ButtonDebounce btnMode;
     bool bothPressed = false;
     bool skipNextRollRelease = false;
     bool skipNextModeRelease = false;
