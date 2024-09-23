@@ -41,11 +41,12 @@ LedControl::LedControl() {
     pinMode(SPI_CLK, OUTPUT);
     pinMode(SPI_CS, OUTPUT);
 
+    shutdown(true);
     spiTransfer(OP_DISPLAYTEST, 0);
     setScanLimit(7);
     spiTransfer(OP_DECODEMODE, 0);
     clearDisplay();
-    shutdown(true);
+    shutdown(false);
 }
 
 void LedControl::shutdown(bool b) { spiTransfer(OP_SHUTDOWN, !b); }

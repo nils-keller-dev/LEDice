@@ -34,9 +34,7 @@ void setup() {
 
     delay(100);
 
-    matrix = new LedControl(DIN_PIN, CLK_PIN, CS_PIN);
-    matrix->clearDisplay();
-    matrix->shutdown(false);
+    matrix = new LedControl();
 
     uint8_t intensity = 0;
     pinMode(ROLL_PIN, INPUT_PULLUP);
