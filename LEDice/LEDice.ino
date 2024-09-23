@@ -25,16 +25,7 @@ unsigned long rollStartTime = 0;
 unsigned long lastBlinkTime = 0;
 bool isBlinkingOn = true;
 
-void rollDice(bool isDisplay = false) {
-    matrix->clearDisplay();
-    uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
-
-    if (multipleNumber == 1 || selectedDice >= 3) {
-        diceRoller->rollSingleDice(maximum, isDisplay);
-    } else {
-        diceRoller->rollMultipleDice(multipleNumber, maximum, isDisplay);
-    }
-}
+void rollDice(bool isDisplay = false);
 
 void setup() {
     pinMode(RND_PIN, INPUT);
@@ -100,6 +91,17 @@ void loop() {
             }
 
             break;
+    }
+}
+
+void rollDice(bool isDisplay = false) {
+    matrix->clearDisplay();
+    uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
+
+    if (multipleNumber == 1 || selectedDice >= 3) {
+        diceRoller->rollSingleDice(maximum, isDisplay);
+    } else {
+        diceRoller->rollMultipleDice(multipleNumber, maximum, isDisplay);
     }
 }
 
