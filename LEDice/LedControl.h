@@ -34,12 +34,8 @@ class LedControl {
    private:
     void spiTransfer(byte opcode, byte data);
 
-    uint8_t SPI_MOSI;
-    uint8_t SPI_CLK;
-    uint8_t SPI_CS;
-
    public:
-    LedControl(uint8_t dataPin, uint8_t clkPin, uint8_t csPin);
+    LedControl();
 
     void shutdown(bool status);
 

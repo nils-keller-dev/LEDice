@@ -2,9 +2,6 @@
 #include "LedControl.h"
 #include "LedPatterns.h"
 
-#define CS_PIN PB0
-#define CLK_PIN PB1
-#define DIN_PIN PB2
 #define ROLL_PIN PB4
 #define MODE_PIN PB3
 #define RND_PIN A1

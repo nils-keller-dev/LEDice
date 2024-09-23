@@ -26,20 +26,20 @@
 
 #include "LedControl.h"
 
+#define SPI_CS PB0
+#define SPI_CLK PB1
+#define SPI_MOSI PB2
+
 #define OP_DECODEMODE 9
 #define OP_INTENSITY 10
 #define OP_SCANLIMIT 11
 #define OP_SHUTDOWN 12
 #define OP_DISPLAYTEST 15
 
-LedControl::LedControl(uint8_t dataPin, uint8_t clkPin, uint8_t csPin) {
-    SPI_MOSI = dataPin;
-    SPI_CLK = clkPin;
-    SPI_CS = csPin;
+LedControl::LedControl() {
     pinMode(SPI_MOSI, OUTPUT);
     pinMode(SPI_CLK, OUTPUT);
     pinMode(SPI_CS, OUTPUT);
-    digitalWrite(SPI_CS, HIGH);
 
     spiTransfer(OP_DISPLAYTEST, 0);
     setScanLimit(7);
