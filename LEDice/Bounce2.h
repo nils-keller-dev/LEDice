@@ -37,10 +37,8 @@
 
 class Bounce2 {
    public:
-    Bounce2();
+    Bounce2(int pin, int mode = INPUT_PULLUP);
 
-    void attach(int pin, int mode);
-    void attach(int pin);
     bool update();
     bool read() const;
     bool changed() const;
@@ -59,7 +57,6 @@ class Bounce2 {
     bool getStateFlag(const uint8_t flag) const;
     bool readCurrentState();
     void setPinMode(int pin, int mode);
-    void begin();
 
     unsigned long previous_millis;
     uint8_t state;

@@ -1,18 +1,8 @@
 #include "Bounce2.h"
 
-Bounce2::Bounce2() : previous_millis(0), state(0), pin(0) {}
-
-void Bounce2::attach(int pin) {
-    this->pin = pin;
-    begin();
-}
-
-void Bounce2::attach(int pin, int mode) {
+Bounce2::Bounce2(int pin, int mode) : previous_millis(0), state(0), pin(pin) {
     setPinMode(pin, mode);
-    this->attach(pin);
-}
-
-void Bounce2::begin() {
+    this->pin = pin;
     state = 0;
     if (readCurrentState()) {
         setStateFlag(DEBOUNCED_STATE | UNSTABLE_STATE);

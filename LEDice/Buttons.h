@@ -10,15 +10,11 @@ class Buttons {
 
    public:
     Buttons(uint8_t rollPin, uint8_t modePin, bool rollPressed,
-            bool modePressed) {
+            bool modePressed)
+        : btnRoll(rollPin), btnMode(modePin) {
         skipNextRollRelease = rollPressed;
         skipNextModeRelease = modePressed;
         if (skipNextRollRelease && skipNextModeRelease) bothPressed = true;
-
-        btnRoll = Bounce2();
-        btnMode = Bounce2();
-        btnRoll.attach(rollPin, INPUT_PULLUP);
-        btnMode.attach(modePin, INPUT_PULLUP);
     }
 
     void update() {
