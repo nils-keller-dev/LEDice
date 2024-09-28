@@ -9,6 +9,18 @@ void DiceRoller::startRoll(uint8_t count, uint8_t maximum, bool isDisplay) {
     isRolling = true;
     rollStartTime = millis();
     currentAnimationStep = 0;
+
+    for (uint8_t i = 0; i < count; i++) {
+        currentAnimationSteps[i] = 0;
+        delayOffsets[i] = random(0, 255);
+        lastNumbers[i] = maximum - 1;
+    }
+
+    if (count == 1) {
+        delayOffsets[0] = 0;
+    } else {
+        rollMultipleDots(lastNumbers);
+    }
 }
 
 void DiceRoller::updateRoll(unsigned long currentTime) {
@@ -28,24 +40,34 @@ void DiceRoller::updateRoll(unsigned long currentTime) {
         return;
     }
 
-    if (currentTime - rollStartTime > calculateDelay()) {
-        currentAnimationStep++;
-        if (count == 1) {
-            rollSingleDice();
-        } else {
-            rollMultipleDice();
-        }
+    bool allFinished = true;
 
-        if (currentAnimationStep == 7) {
-            isRolling = false;
+    for (uint8_t i = 0; i < count; i++) {
+        if (currentAnimationSteps[i] < 7) {
+            allFinished = false;
+
+            if (currentTime - rollStartTime >
+                delayOffsets[i] + calculateDelay(currentAnimationSteps[i])) {
+                currentAnimationSteps[i]++;
+                if (count == 1) {
+                    rollSingleDice();
+                } else {
+                    uint8_t number;
+                    do {
+                        number = random(maximum);
+                    } while (number == lastNumbers[i]);
+                    lastNumbers[i] = number;
+
+                    rollMultipleDots(lastNumbers);
+                }
+            }
         }
     }
+
+    isRolling = !allFinished;
 }
 
-uint16_t DiceRoller::calculateDelay() {
-    return 15 * currentAnimationStep * currentAnimationStep +
-           65 * currentAnimationStep;
-}
+uint16_t DiceRoller::calculateDelay(uint8_t x) { return 15 * x * x + 65 * x; }
 
 void DiceRoller::rollSingleDice() {
     uint8_t number;
@@ -56,19 +78,6 @@ void DiceRoller::rollSingleDice() {
     lastNumbers[0] = number;
 
     maximum < 10 ? rollDot(number) : rollDecimal(number);
-}
-
-void DiceRoller::rollMultipleDice() {
-    uint8_t numbers[4];
-
-    for (uint8_t i = 0; i < count; i++) {
-        do {
-            numbers[i] = random(maximum);
-        } while (numbers[i] == lastNumbers[i]);
-        lastNumbers[i] = numbers[i];
-    }
-
-    rollMultipleDots(numbers);
 }
 
 void DiceRoller::rollDecimal(uint8_t number) {
