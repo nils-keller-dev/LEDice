@@ -23,6 +23,7 @@ class DiceRoller {
     uint8_t maximum;
     bool isDisplay;
 
+    uint16_t calculateDelay();
     void rollSingleDice();
     void rollMultipleDice();
     void rollDecimal(uint8_t number);

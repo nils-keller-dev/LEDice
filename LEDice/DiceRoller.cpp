@@ -2,8 +2,6 @@
 
 DiceRoller::DiceRoller(LedControl* matrix) : matrix(matrix) {}
 
-const uint16_t delayTime[8] PROGMEM = {0, 80, 190, 330, 500, 700, 930, 1190};
-
 void DiceRoller::startRoll(uint8_t count, uint8_t maximum, bool isDisplay) {
     this->count = count;
     this->maximum = maximum;
@@ -30,8 +28,7 @@ void DiceRoller::updateRoll(unsigned long currentTime) {
         return;
     }
 
-    if (currentTime - rollStartTime >
-        pgm_read_word(&delayTime[currentAnimationStep])) {
+    if (currentTime - rollStartTime > calculateDelay()) {
         currentAnimationStep++;
         if (count == 1) {
             rollSingleDice();
@@ -43,6 +40,11 @@ void DiceRoller::updateRoll(unsigned long currentTime) {
             isRolling = false;
         }
     }
+}
+
+uint16_t DiceRoller::calculateDelay() {
+    return 15 * currentAnimationStep * currentAnimationStep +
+           65 * currentAnimationStep;
 }
 
 void DiceRoller::rollSingleDice() {
