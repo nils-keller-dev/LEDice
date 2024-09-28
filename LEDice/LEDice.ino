@@ -20,8 +20,6 @@ State currentState = ROLLING;
 uint8_t selectedDice = 1;
 uint8_t multipleNumber = 1;
 
-bool isRolling = false;
-unsigned long rollStartTime = 0;
 unsigned long lastBlinkTime = 0;
 bool isBlinkingOn = true;
 
@@ -53,13 +51,13 @@ void setup() {
 
 void loop() {
     buttons->update();
+    diceRoller->updateRoll(millis());
 
     switch (currentState) {
         case ROLLING:
-            handleRolling(millis());
 
             if (buttons->wasRollReleased()) {
-                startRoll();
+                rollDice();
             }
             if (buttons->wasModeReleased() && selectedDice <= 2) {
                 handleModePress();
@@ -97,25 +95,7 @@ void loop() {
 void rollDice(bool isDisplay = false) {
     matrix->clearDisplay();
     uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
-
-    if (multipleNumber == 1 || selectedDice >= 3) {
-        diceRoller->rollSingleDice(maximum, isDisplay);
-    } else {
-        diceRoller->rollMultipleDice(multipleNumber, maximum, isDisplay);
-    }
-}
-
-void startRoll() {
-    matrix->clearDisplay();
-    rollStartTime = millis();
-    isRolling = true;
-}
-
-void handleRolling(unsigned long currentTime) {
-    if (isRolling && currentTime - rollStartTime >= ROLL_TIME) {
-        rollDice();
-        isRolling = false;
-    }
+    diceRoller->startRoll(multipleNumber, maximum, isDisplay);
 }
 
 void handleBlinking(unsigned long currentTime) {

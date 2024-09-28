@@ -2,31 +2,71 @@
 
 DiceRoller::DiceRoller(LedControl* matrix) : matrix(matrix) {}
 
-void DiceRoller::rollSingleDice(uint8_t maximum, bool isDisplay) {
-    uint8_t number = isDisplay ? maximum : random(maximum) + 1;
+const uint16_t delayTime[8] PROGMEM = {0, 80, 190, 330, 500, 700, 930, 1190};
+
+void DiceRoller::startRoll(uint8_t count, uint8_t maximum, bool isDisplay) {
+    this->count = count;
+    this->maximum = maximum;
+    this->isDisplay = isDisplay;
+    isRolling = true;
+    rollStartTime = millis();
+    currentAnimationStep = 0;
+}
+
+void DiceRoller::updateRoll(unsigned long currentTime) {
+    if (!isRolling) return;
+
+    if (isDisplay) {
+        if (count == 1) {
+            maximum < 10 ? rollDot(maximum) : rollDecimal(maximum);
+        } else {
+            uint8_t numbers[4];
+            for (uint8_t i = 0; i < count; i++) {
+                numbers[i] = maximum - 1;
+            }
+            rollMultipleDots(numbers);
+        }
+        isRolling = false;
+        return;
+    }
+
+    if (currentTime - rollStartTime >
+        pgm_read_word(&delayTime[currentAnimationStep])) {
+        currentAnimationStep++;
+        if (count == 1) {
+            rollSingleDice();
+        } else {
+            rollMultipleDice();
+        }
+
+        if (currentAnimationStep == 7) {
+            isRolling = false;
+        }
+    }
+}
+
+void DiceRoller::rollSingleDice() {
+    uint8_t number;
+    do {
+        number = random(maximum) + 1;
+    } while (number == lastNumbers[0]);
+
+    lastNumbers[0] = number;
+
     maximum < 10 ? rollDot(number) : rollDecimal(number);
 }
 
-void DiceRoller::rollMultipleDice(uint8_t count, uint8_t maximum,
-                                  bool isDisplay) {
-    uint8_t numbers[count];
+void DiceRoller::rollMultipleDice() {
+    uint8_t numbers[4];
 
     for (uint8_t i = 0; i < count; i++) {
-        numbers[i] = isDisplay ? maximum - 1 : random(maximum);
+        do {
+            numbers[i] = random(maximum);
+        } while (numbers[i] == lastNumbers[i]);
+        lastNumbers[i] = numbers[i];
     }
 
-    for (uint8_t i = 0; i <= 2; i++) {
-        matrix->setRow(7 - i, pgm_read_byte(&smallDot[numbers[0]][i]) |
-                                  pgm_read_byte(&smallDot[numbers[1]][i]) << 5);
-    }
-
-    if (count > 2) {
-        for (uint8_t i = 0; i < 3; i++) {
-            uint8_t row = pgm_read_byte(&smallDot[numbers[2]][i]);
-            if (count == 4) row |= pgm_read_byte(&smallDot[numbers[3]][i]) << 5;
-            matrix->setRow(2 - i, row);
-        }
-    }
+    rollMultipleDots(numbers);
 }
 
 void DiceRoller::rollDecimal(uint8_t number) {
@@ -49,5 +89,20 @@ void DiceRoller::rollDecimal(uint8_t number) {
 void DiceRoller::rollDot(uint8_t number) {
     for (uint8_t i = 0; i <= 7; i++) {
         matrix->setRow(7 - i, pgm_read_byte(&dot[number - 1][i]));
+    }
+}
+
+void DiceRoller::rollMultipleDots(uint8_t numbers[4]) {
+    for (uint8_t i = 0; i <= 2; i++) {
+        matrix->setRow(7 - i, pgm_read_byte(&smallDot[numbers[0]][i]) |
+                                  pgm_read_byte(&smallDot[numbers[1]][i]) << 5);
+    }
+
+    if (count > 2) {
+        for (uint8_t i = 0; i < 3; i++) {
+            uint8_t row = pgm_read_byte(&smallDot[numbers[2]][i]);
+            if (count == 4) row |= pgm_read_byte(&smallDot[numbers[3]][i]) << 5;
+            matrix->setRow(2 - i, row);
+        }
     }
 }
