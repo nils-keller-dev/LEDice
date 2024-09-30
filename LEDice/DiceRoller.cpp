@@ -10,16 +10,17 @@ void DiceRoller::startRoll(uint8_t count, uint8_t maximum, bool isDisplay) {
     rollStartTime = millis();
     currentAnimationStep = 0;
 
-    for (uint8_t i = 0; i < count; i++) {
-        currentAnimationSteps[i] = 0;
-        delayOffsets[i] = random(0, 255);
-        lastNumbers[i] = maximum - 1;
-    }
+    if (!isDisplay) {
+        for (uint8_t i = 0; i < count; i++) {
+            currentAnimationSteps[i] = 0;
+            delayOffsets[i] = random(0, 255);
+        }
 
-    if (count == 1) {
-        delayOffsets[0] = 0;
-    } else {
-        rollMultipleDots(lastNumbers);
+        if (count == 1) {
+            delayOffsets[0] = 0;
+        } else {
+            rollMultipleDots(lastNumbers);
+        }
     }
 }
 
@@ -30,11 +31,10 @@ void DiceRoller::updateRoll(unsigned long currentTime) {
         if (count == 1) {
             maximum < 10 ? rollDot(maximum) : rollDecimal(maximum);
         } else {
-            uint8_t numbers[4];
             for (uint8_t i = 0; i < count; i++) {
-                numbers[i] = maximum - 1;
+                lastNumbers[i] = maximum - 1;
             }
-            rollMultipleDots(numbers);
+            rollMultipleDots(lastNumbers);
         }
         isRolling = false;
         return;
