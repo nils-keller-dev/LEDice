@@ -52,7 +52,8 @@ The Battery PCB. It is a very simple PCB with the intention to make switching th
 You can use the gerber files [`gerber-LEDice-v0.3.zip`](https://github.com/tsomic/LEDice/blob/main/hardware/gerber-LEDice-v0.3.zip) [`gerber-Battery.zip`](https://github.com/tsomic/LEDice/blob/main/hardware/gerber-Battery.zip) for PCB fabrication. You can order them from companies like [PCBWay](https://www.pcbway.com/).  
 The PCB dimensions are 32mm x 32mm with a thickness of 1mm.
 
-In the future, I'll also add files for a 3D printable case. The custom PCBs are optional, but you will need them if you want to use the case.
+You can find the 3D model on [MakerWorld](https://makerworld.com/en/models/964827#profileId-935173).  
+The custom PCBs are optional, but you will need them if you want to use this case.
 
 ### Components used
 
