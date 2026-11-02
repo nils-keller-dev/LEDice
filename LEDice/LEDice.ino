@@ -1,4 +1,5 @@
 #include "ButtonDebounce.h"
+#include <EEPROM.h>
 #include "DiceRoller.h"
 #include "LedControl.h"
 
@@ -10,13 +11,20 @@ ButtonDebounce* button;
 DiceRoller* diceRoller;
 
 void setup() {
-  // randomSeed(analogRead(RND_PIN));
+  seedRandom();
 
   led = new LedControl();
   diceRoller = new DiceRoller(led);
   button = new ButtonDebounce(ROLL_PIN);
 
   diceRoller->start();
+}
+
+void seedRandom() {
+  uint32_t seed;
+  EEPROM.get(0, seed);
+  randomSeed(seed);
+  EEPROM.put(0, seed * 1103515245UL + 12345UL);
 }
 
 void loop() {
