@@ -23,7 +23,8 @@ void loop() {
   button->update();
   diceRoller->update(millis());
 
-  if (button->released()) {
+  if (button->pressed()) {
+    randomSeed(random() ^ micros());
     diceRoller->start();
   }
 }
