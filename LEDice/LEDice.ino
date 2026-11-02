@@ -1,130 +1,29 @@
-#include "Buttons.h"
+#include "ButtonDebounce.h"
 #include "DiceRoller.h"
 #include "LedControl.h"
 
-#define ROLL_PIN PB4
-#define MODE_PIN PB3
-#define RND_PIN A1
+#define ROLL_PIN 4
 #define ROLL_TIME 300
-#define BLINK_INTERVAL 500
 
-const uint8_t diceSidesCount[6] PROGMEM = {4, 6, 8, 10, 12, 20};
-
-enum State { ROLLING, SELECTING };
-
-LedControl* matrix;
-Buttons* buttons;
+LedControl* led;
+ButtonDebounce* button;
 DiceRoller* diceRoller;
 
-State currentState = ROLLING;
-uint8_t selectedDice = 1;
-uint8_t multipleNumber = 1;
-
-unsigned long lastBlinkTime = 0;
-bool isBlinkingOn = true;
-
-void rollDice(bool isDisplay = false);
-
 void setup() {
-    pinMode(RND_PIN, INPUT);
-    randomSeed(analogRead(RND_PIN));
+  // randomSeed(analogRead(RND_PIN));
 
-    delay(100);
+  led = new LedControl();
+  diceRoller = new DiceRoller(led);
+  button = new ButtonDebounce(ROLL_PIN);
 
-    matrix = new LedControl();
-    diceRoller = new DiceRoller(matrix);
-
-    uint8_t intensity = 0;
-    pinMode(ROLL_PIN, INPUT_PULLUP);
-    pinMode(MODE_PIN, INPUT_PULLUP);
-    bool rollPressed = !digitalRead(ROLL_PIN);
-    bool modePressed = !digitalRead(MODE_PIN);
-
-    if (rollPressed) intensity += 5;
-    if (modePressed) intensity += 10;
-    matrix->setIntensity(intensity);
-
-    buttons = new Buttons(ROLL_PIN, MODE_PIN, rollPressed, modePressed);
-
-    rollDice();
+  diceRoller->start();
 }
 
 void loop() {
-    buttons->update();
-    diceRoller->updateRoll(millis());
+  button->update();
+  diceRoller->update(millis());
 
-    switch (currentState) {
-        case ROLLING:
-
-            if (buttons->wasRollReleased()) {
-                rollDice();
-            }
-            if (buttons->wasModeReleased() && selectedDice <= 2) {
-                handleModePress();
-                rollDice(true);
-            }
-            if (buttons->wereBothPressed()) {
-                currentState = SELECTING;
-                lastBlinkTime = 0;
-                isBlinkingOn = false;
-                multipleNumber = 1;
-            }
-            break;
-
-        case SELECTING:
-            handleBlinking(millis());
-
-            if (buttons->wereBothPressed()) {
-                confirmSelection();
-                rollDice(true);
-                return;
-            }
-
-            if (buttons->wasModeReleased()) {
-                selectNextDice();
-                updateSelectedDice();
-            } else if (buttons->wasRollReleased()) {
-                selectPreviousDice();
-                updateSelectedDice();
-            }
-
-            break;
-    }
+  if (button->released()) {
+    diceRoller->start();
+  }
 }
-
-void rollDice(bool isDisplay = false) {
-    matrix->clearDisplay();
-    uint8_t maximum = pgm_read_byte(&diceSidesCount[selectedDice]);
-    diceRoller->startRoll(multipleNumber, maximum, isDisplay);
-}
-
-void handleBlinking(unsigned long currentTime) {
-    if (currentTime - lastBlinkTime >= BLINK_INTERVAL) {
-        lastBlinkTime = currentTime;
-        isBlinkingOn = !isBlinkingOn;
-        isBlinkingOn ? rollDice(true) : matrix->clearDisplay();
-    }
-}
-
-void confirmSelection() {
-    currentState = ROLLING;
-    lastBlinkTime = 0;
-    isBlinkingOn = false;
-}
-
-void updateSelectedDice() {
-    lastBlinkTime = 0;
-    isBlinkingOn = false;
-}
-
-void selectNextDice() {
-    selectedDice = (selectedDice + 1) % 6;
-    multipleNumber = 1;
-}
-
-void selectPreviousDice() {
-    selectedDice = (selectedDice + 5) % 6;
-    multipleNumber = 1;
-}
-
-void handleModePress() { multipleNumber = (multipleNumber % 4) + 1; }
