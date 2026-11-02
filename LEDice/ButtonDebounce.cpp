@@ -35,11 +35,11 @@ inline void ButtonDebounce::changeState() {
 
 bool ButtonDebounce::read() const { return getStateFlag(DEBOUNCED_STATE); }
 
-bool ButtonDebounce::changed() const { return getStateFlag(CHANGED_STATE); }
-
 bool ButtonDebounce::isPressed() const { return read() == LOW; }
 
-bool ButtonDebounce::released() const { return changed() && !isPressed(); }
+bool ButtonDebounce::changed() const { return getStateFlag(CHANGED_STATE); }
+
+bool ButtonDebounce::pressed() const { return changed() && isPressed(); }
 
 void ButtonDebounce::setStateFlag(const uint8_t flag) { state |= flag; }
 

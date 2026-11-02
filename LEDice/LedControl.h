@@ -1,6 +1,3 @@
-#ifndef LedControl_h
-#define LedControl_h
-
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 
@@ -13,5 +10,3 @@ class LedControl {
 
     void showFace(uint8_t number);
 };
-
-#endif
