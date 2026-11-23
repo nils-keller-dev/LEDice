@@ -3,7 +3,8 @@
 #include "DiceRoller.h"
 #include "LedControl.h"
 
-#define ROLL_PIN 4
+#define ROLL_PIN PB4
+#define RND_PIN A1
 #define ROLL_TIME 300
 
 LedControl* led;
@@ -11,20 +12,14 @@ ButtonDebounce* button;
 DiceRoller* diceRoller;
 
 void setup() {
-  seedRandom();
+  pinMode(RND_PIN, INPUT);
+  randomSeed(analogRead(RND_PIN));
 
   led = new LedControl();
   diceRoller = new DiceRoller(led);
   button = new ButtonDebounce(ROLL_PIN);
 
   diceRoller->start();
-}
-
-void seedRandom() {
-  uint32_t seed;
-  EEPROM.get(0, seed);
-  randomSeed(seed);
-  EEPROM.put(0, seed * 1103515245UL + 12345UL);
 }
 
 void loop() {
